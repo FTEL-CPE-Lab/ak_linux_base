@@ -19,7 +19,7 @@ void* gw_task_app2_entry(void) {
 
 		case 0: {
 			char* data = (char*)msg->header->payload;
-			AK_PRINT("[DEBUG] app1 running with thread id: %d\n", get_task_id());
+			AK_PRINT("[DEBUG] app2 running with thread id: %d\n", get_task_id());
 			unsigned char* test_msg = (unsigned char*)calloc(1, 50);
 			strcpy(test_msg, "hello from app2");
 			task_post_dynamic_msg(GW_TASK_APP_1, 1, (uint8_t*)test_msg, strlen(test_msg)+1);
