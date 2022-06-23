@@ -11,12 +11,12 @@ all: $(NAME_MODULE)
 
 $(EXAMPLE_DIR)/%.o: %.c
 	@echo CC $< 
-	@$(CC) -c -o $@ $< $(CFLAGS) $(LDFLAGS) $(OBJ_DIR)/libak.so
+	@$(CC) -c -o $@ $< $(CFLAGS) $(LDFLAGS)
 
 $(NAME_MODULE): $(OBJ)
 	@echo ---------- START LINK PROJECT ----------
-	@echo $(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
-	@$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(OBJ_DIR)/libak.so
+	@echo $(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(OBJ_DIR)/libak.la
+	@$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(OBJ_DIR)/libak.la
 	
 clean:
 	@echo rm -rf $(EXAMPLE_DIR)/$(OBJ)

@@ -1,7 +1,7 @@
 #include "main.h"
 
 int main() {
-	ak_init_tasks(AK_TASK_LIST_LEN, task_list);
+	ak_init_tasks(AK_TASK_LIST_LEN, task_list_init);
 
     ak_start_all_tasks();
 

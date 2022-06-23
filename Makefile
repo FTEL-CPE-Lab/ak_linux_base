@@ -1,9 +1,10 @@
 -include config.mk
 -include src/Makefile.mk
 
-NAME_MODULE=libak.so
+NAME_SHARE_MODULE = libak.so
+NAME_STATIC_MODULE = libak.la
 
-all: create $(OBJ_DIR)/$(NAME_MODULE) example
+all: create $(OBJ_DIR)/$(NAME_SHARE_MODULE) $(OBJ_DIR)/$(NAME_STATIC_MODULE) example
 
 create:
 	@echo mkdir -p $(OBJ_DIR)
@@ -13,10 +14,15 @@ $(OBJ_DIR)/%.o: %.c
 	@echo CC $<
 	@$(CC) -c -o $@ $< $(CFLAGS) $(LDFLAGS)
 
-$(OBJ_DIR)/$(NAME_MODULE): $(OBJ)
+$(OBJ_DIR)/$(NAME_SHARE_MODULE): $(OBJ)
 	@echo ---------- START LINK PROJECT ----------
-	@echo $(CC) -o $@ $^ $(CFLAGS)
+	@echo $(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LDLIBS) 
 	@$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LDLIBS)
+
+$(OBJ_DIR)/$(NAME_STATIC_MODULE): $(OBJ)
+	@echo ---------- START LINK PROJECT ----------
+	@echo $(AR) rcs $@ $^
+	@$(AR) rcs $@ $^
 
 .PHONY: example
 example:
@@ -31,9 +37,11 @@ clean:
 .PHONY: install
 install: all
 	@echo install -D $(HEADER_DIR)/*.h $(PREFIX)/include
-	@echo install -d $(OBJ_DIR)/$(NAME_MODULE) $(PREFIX)/lib
+	@echo install -D $(OBJ_DIR)/$(NAME_SHARE_MODULE) $(PREFIX)/lib
+	@echo install -D $(OBJ_DIR)/$(NAME_STATIC_MODULE) $(PREFIX)/lib
 	@install -d $(PREFIX)/include/$(HEADER_DIR)
 	@install -d $(PREFIX)/lib
 	@install -D $(HEADER_DIR)/*.h $(PREFIX)/include/$(HEADER_DIR)
-	@install -D $(OBJ_DIR)/$(NAME_MODULE) $(PREFIX)/lib
-	@cd $(PREFIX)/lib && ln -sf $(NAME_MODULE) $(NAME_MODULE).$(VERSION)
+	@install -D $(OBJ_DIR)/$(NAME_SHARE_MODULE) $(PREFIX)/lib
+	@install -D $(OBJ_DIR)/$(NAME_STATIC_MODULE) $(PREFIX)/lib
+	@cd $(PREFIX)/lib && ln -sf $(NAME_SHARE_MODULE) $(NAME_SHARE_MODULE).$(VERSION)

@@ -1,6 +1,6 @@
 #include "task_list.h"
 
-ak_task_t task_list[] = {
+ak_task_t task_list_init[] = {
 	/* SYSTEM TASKS */
 	{	DEFAULT_AK_FIRST_TASK,	TASK_PRI_LEVEL_1,	timer_entry     ,	&timer_mailbox		,	"timer service"			},
 

@@ -17,7 +17,7 @@ enum {
 	AK_TASK_LIST_LEN,
 };
 
-extern ak_task_t task_list[];
+extern ak_task_t task_list_init[];
 
 #endif
 
