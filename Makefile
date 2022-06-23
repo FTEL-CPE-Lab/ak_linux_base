@@ -15,12 +15,12 @@ $(OBJ_DIR)/%.o: %.c
 	@$(CC) -c -o $@ $< $(CFLAGS) $(LDFLAGS)
 
 $(OBJ_DIR)/$(NAME_SHARE_MODULE): $(OBJ)
-	@echo ---------- START LINK PROJECT ----------
+	@echo ---------- START BUILD OBJECT LIBRARY ----------
 	@echo $(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LDLIBS) 
 	@$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LDLIBS)
 
 $(OBJ_DIR)/$(NAME_STATIC_MODULE): $(OBJ)
-	@echo ---------- START LINK PROJECT ----------
+	@echo ---------- START LINK LIBRARY ----------
 	@echo $(AR) rcs $@ $^
 	@$(AR) rcs $@ $^
 

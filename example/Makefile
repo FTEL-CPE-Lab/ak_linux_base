@@ -1,6 +1,7 @@
 -include config.mk
 
 NAME_MODULE = $(EXAMPLE_DIR)/example
+NAME_STATIC_MODULE = libak.la
 
 OBJ += 	$(EXAMPLE_DIR)/main.o \
 		$(EXAMPLE_DIR)/task_list.o \
@@ -10,13 +11,14 @@ OBJ += 	$(EXAMPLE_DIR)/main.o \
 all: $(NAME_MODULE)
 
 $(EXAMPLE_DIR)/%.o: %.c
-	@echo CC $< 
+	@echo ---------- START BUILD OBJECT EXAMPLE ----------
+	@echo $(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
 	@$(CC) -c -o $@ $< $(CFLAGS) $(LDFLAGS)
 
 $(NAME_MODULE): $(OBJ)
-	@echo ---------- START LINK PROJECT ----------
-	@echo $(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(OBJ_DIR)/libak.la
-	@$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(OBJ_DIR)/libak.la
+	@echo ---------- START LINK EXAMPLE ----------
+	@echo $(CC) -o $@ $^ $(OBJ_DIR)/$(NAME_STATIC_MODULE) $(CFLAGS) $(LDFLAGS)
+	@$(CC) -o $@ $^ $(OBJ_DIR)/$(NAME_STATIC_MODULE) $(CFLAGS) $(LDFLAGS)
 	
 clean:
 	@echo rm -rf $(EXAMPLE_DIR)/$(OBJ)
