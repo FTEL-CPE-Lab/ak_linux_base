@@ -18,7 +18,6 @@ void* gw_task_app2_entry(void) {
 		switch (msg->header->sig) {
 
 		case 0: {
-			char* data = (char*)msg->header->payload;
 			AK_PRINT("[DEBUG] app2 running with thread id: %d\n", get_task_id());
 			unsigned char* test_msg = (unsigned char*)calloc(1, 50);
 			strcpy(test_msg, "hello from app2");

@@ -6,7 +6,7 @@ AR = $(CROSS_PREFIX)ar
 
 # input version compiler
 VERSION = 1
-STD = gnu11
+STD = gnu99
 
 # input DIR
 ROOT_DIR = $(shell pwd)
