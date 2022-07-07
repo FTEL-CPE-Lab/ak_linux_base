@@ -22,6 +22,7 @@ void* gw_task_app1_entry(void) {
 			unsigned char* test_msg = (unsigned char*)calloc(1, 50);
 			strcpy(test_msg, "hello from app1");
 			task_post_dynamic_msg(GW_TASK_APP_2, 1, (uint8_t*)test_msg, strlen(test_msg)+1);
+			free(test_msg);
 		}
 			break;
 

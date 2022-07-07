@@ -21,7 +21,7 @@
 
 /* internal define */
 #define CLOCKID				CLOCK_REALTIME
-#define TIMER_1MS_SIG		SIGUSR1
+#define SIG					SIGUSR1
 
 #define TIMER_ADD_SIG		0x01
 #define AK_TIMER_UNIT 		1000000
@@ -55,17 +55,15 @@ q_msg_t timer_mailbox;
 static timer_service_t timer_service;
 static pthread_mutex_t mt_timer_service;
 
-static timer_t timer_id_1ms;
-
 /* internal function */
 static uint32_t timer_service_remove_node(uint32_t dst, uint32_t sig);
 
 /* timer stick counter */
 static volatile uint32_t timer_stick_counter;
 
-void timer_handler(void) {
+void timer_handler(int sig, siginfo_t *si, void *uc) {
 	timer_stick_counter++;
-
+	// AK_PRINT("[DEBUG] tick: %d\n", timer_stick_counter);
 	pthread_mutex_lock(&mt_timer_service);
 
 	timer_msg_t* remove_node_mask = NULL;
@@ -99,10 +97,6 @@ void timer_handler(void) {
 	pthread_mutex_unlock(&mt_timer_service);
 }
 
-void calibrate_ak_timer_unit(uint32_t ak_timer_unit) {
-	ak_timer_unit_init = ak_timer_unit;
-}
-
 void* timer_entry(void) {
 	timer_service.head = NULL;
 	timer_service.tail = NULL;
@@ -110,10 +104,19 @@ void* timer_entry(void) {
 	/* configure timer */
 	struct sigevent sev;
 	struct itimerspec its;
+	static timer_t timer_id_1ms;
+	sigset_t mask;
+
+   	AK_PRINT("Blocking signal %d\n", SIG);
+    sigemptyset(&mask);
+    sigaddset(&mask, SIG);
+    if (sigprocmask(SIG_SETMASK, &mask, NULL) == -1)
+        perror("sigprocmask");
+	AK_PRINT("timer ID is 0x%lx\n", (long) timer_id_1ms);
 
 	/* create the timer */
 	sev.sigev_notify = SIGEV_THREAD;
-	sev.sigev_signo = TIMER_1MS_SIG;
+	sev.sigev_signo = SIG;
 	sev.sigev_value.sival_ptr = &timer_id_1ms;
 	sev.sigev_notify_attributes	= NULL;
 	sev.sigev_notify_function = timer_handler;
@@ -126,10 +129,119 @@ void* timer_entry(void) {
 	its.it_interval.tv_nsec = its.it_value.tv_nsec;
 	timer_settime(timer_id_1ms, 0, &its, NULL);
 
+	AK_PRINT("Unblocking signal %d\n", SIG);
+	if (sigprocmask(SIG_UNBLOCK, &mask, NULL) == -1)
+		perror("sigprocmask");
+
 	wait_all_tasks_started();
 
 	return (void*)0;
 }
+
+void calibrate_ak_timer_unit(uint32_t ak_timer_unit) {
+	ak_timer_unit_init = ak_timer_unit;
+}
+
+// void init_timer_system() {
+
+// 	AK_PRINT("init_timer_system\n");
+
+// 	timer_service.head = NULL;
+// 	timer_service.tail = NULL;
+
+// 	/* configure timer */
+// 	/* configure timer */
+// 	struct timeval my_value={1,0};
+// 	struct timeval my_interval={1,0};
+// 	struct itimerval my_timer={my_interval, my_value};
+// 	setitimer(ITIMER_REAL, &my_timer, 0);
+
+// 	signal(SIGALRM,  timer_handler);
+// }
+
+// void *timer_entry() {
+
+// 	AK_PRINT("init_timer_system\n");
+
+// 	timer_service.head = NULL;
+// 	timer_service.tail = NULL;
+//     struct sigaction sa;
+// 	memset (&sa, 0, sizeof (sa));
+// 	sa.sa_handler = &timer_handler;
+// 	sigemptyset(&sa.sa_mask);
+// 	sigaction (SIGALRM/*SIGVTALRM*/, &sa, NULL);
+
+// 	/* configure timer */
+// 	/* configure timer */
+// 	struct timeval my_value={1,0};
+// 	struct timeval my_interval={1,0};
+// 	struct itimerval my_timer={my_interval, my_value};
+// 	setitimer(ITIMER_REAL, &my_timer, 0);
+
+// 	// signal(SIGALRM,  timer_handler);
+// 	wait_all_tasks_started();
+// }
+
+// void* timer_entry(void) {
+// 	timer_service.head = NULL;
+// 	timer_service.tail = NULL;
+
+//     timer_t timerid;
+//     struct sigevent sev;
+//     struct itimerspec its;
+//     // long long freq_nanosecs;
+//     sigset_t mask;
+//     struct sigaction sa;
+
+//    /* Establish handler for timer signal */
+
+//    	AK_PRINT("Establishing handler for signal %d\n", SIG);
+//     sa.sa_flags = SA_SIGINFO;
+//     sa.sa_sigaction = timer_handler;
+//     sigemptyset(&sa.sa_mask);
+//     if (sigaction(SIG, &sa, NULL) == -1)
+//         perror("sigaction");
+
+//    /* Block timer signal temporarily */
+
+//    	AK_PRINT("Blocking signal %d\n", SIG);
+//     sigemptyset(&mask);
+//     sigaddset(&mask, SIG);
+//     if (sigprocmask(SIG_SETMASK, &mask, NULL) == -1)
+//         perror("sigprocmask");
+// 	AK_PRINT("timer ID is 0x%lx\n", (long) timerid);
+
+// 	/* create the timer */
+
+// 	sev.sigev_notify = SIGEV_SIGNAL;
+// 	sev.sigev_signo = SIG;
+// 	sev.sigev_value.sival_ptr = &timerid;
+// 	// sev.sigev_notify_attributes	= NULL;
+// 	// sev.sigev_notify_function = timer_handler;
+// 	// timer_create(CLOCKID, &sev, &timer_id_1ms);
+//     if (timer_create(CLOCKID, &sev, &timerid) == -1)
+//         perror("timer_create");
+
+//    	AK_PRINT("timer ID is 0x%lx\n", (long) timerid);
+
+// 	/* start the timer */
+
+// 	its.it_value.tv_sec = 1;
+// 	its.it_value.tv_nsec = 0; /* timer 1ms */
+// 	its.it_interval.tv_sec = its.it_value.tv_sec;
+// 	its.it_interval.tv_nsec = its.it_value.tv_nsec;
+//    	if (timer_settime(timerid, 0, &its, NULL) == -1)
+//         perror("timer_settime");
+
+
+// 	AK_PRINT("Unblocking signal %d\n", SIG);
+// 	if (sigprocmask(SIG_UNBLOCK, &mask, NULL) == -1)
+// 		perror("sigprocmask");
+
+// 	wait_all_tasks_started();
+
+// 	return (void*)0;
+// }
 
 uint32_t timer_set(uint32_t des_task_id, uint32_t sig, uint32_t duty, timer_type_t timer_type) {
 	AK_TIMER_DBG("[TIMER][timer_set] des_task_id:%d sig:%d duty:%d timer_type:%d\n", des_task_id, sig, duty, timer_type);

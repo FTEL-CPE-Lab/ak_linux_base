@@ -405,7 +405,7 @@ uint8_t get_data_len_common_msg(ak_msg_t* msg) {
 void set_data_dynamic_msg(ak_msg_t* msg, uint8_t* data, uint32_t len) {
 	if (msg != NULL) {
 		if (msg->header->type == DYNAMIC_MSG_TYPE) {
-			msg->header->payload = (uint8_t*)malloc((size_t)len);
+			msg->header->payload = (uint8_t*)calloc(1, (size_t)len);
 			if (msg->header->payload == NULL) {
 				FATAL("AK", 0x14);
 			}
