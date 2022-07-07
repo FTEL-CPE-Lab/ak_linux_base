@@ -51,7 +51,7 @@ void ak_start_task(uint32_t task_id) {
 	q_msg_init(task_list[task_id].mailbox);
 
 	pthread_attr_init(&(task_list[task_id].pthread_attr));
-	pthread_attr_setstacksize(&(task_list[task_id].pthread_attr), PTHREAD_STACK_MIN); 
+	// pthread_attr_setstacksize(&(task_list[task_id].pthread_attr), PTHREAD_STACK_MIN); 
 	/* create task */
 	pthread_create(&(task_list[task_id].pthread), &(task_list[task_id].pthread_attr), task_list[task_id].task, NULL);
 	AK_PRINT("ID:%08x\tCREATE: %s\n",(uint32_t)task_list[task_id].pthread, task_list[task_id].info);
