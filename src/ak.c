@@ -107,12 +107,12 @@ void wait_all_tasks_started() {
 }
 
 ak_msg_t* get_pure_msg() {
-	ak_msg_t* g_msg = (ak_msg_t*)malloc(sizeof(ak_msg_t));
+	ak_msg_t* g_msg = (ak_msg_t*)calloc(1, sizeof(ak_msg_t));
 	if (g_msg == NULL) {
 		FATAL("AK", 0x01);
 	}
 
-	g_msg->header = (header_t*)malloc(sizeof(header_t));
+	g_msg->header = (header_t*)calloc(1, sizeof(header_t));
 	if (g_msg->header == NULL) {
 		FATAL("AK", 0x02);
 	}
@@ -131,12 +131,12 @@ ak_msg_t* get_pure_msg() {
 }
 
 ak_msg_t* get_dynamic_msg() {
-	ak_msg_t* g_msg = (ak_msg_t*)malloc(sizeof(ak_msg_t));
+	ak_msg_t* g_msg = (ak_msg_t*)calloc(1, sizeof(ak_msg_t));
 	if (g_msg == NULL) {
 		FATAL("AK", 0x02);
 	}
 
-	g_msg->header = (header_t*)malloc(sizeof(header_t));
+	g_msg->header = (header_t*)calloc(1, sizeof(header_t));
 	if (g_msg->header == NULL) {
 		FATAL("AK", 0x03);
 	}
@@ -155,12 +155,12 @@ ak_msg_t* get_dynamic_msg() {
 }
 
 ak_msg_t* get_common_msg() {
-	ak_msg_t* g_msg = (ak_msg_t*)malloc(sizeof(ak_msg_t));
+	ak_msg_t* g_msg = (ak_msg_t*)calloc(1, sizeof(ak_msg_t));
 	if (g_msg == NULL) {
 		FATAL("AK", 0x04);
 	}
 
-	g_msg->header = (header_t*)malloc(sizeof(header_t));
+	g_msg->header = (header_t*)calloc(1, sizeof(header_t));
 	if (g_msg->header == NULL) {
 		FATAL("AK", 0x05);
 	}
@@ -318,7 +318,7 @@ void set_if_data_dynamic_msg(ak_msg_t* msg, uint8_t* data, uint32_t len) {
 void set_data_common_msg(ak_msg_t* msg, uint8_t* data, uint32_t len) {
 	if (msg != NULL) {
 		if (msg->header->type == COMMON_MSG_TYPE) {
-			msg->header->payload = (uint8_t*)malloc((size_t)len);
+			msg->header->payload = (uint8_t*)calloc(1, (size_t)len);
 			if (msg->header->payload == NULL) {
 				FATAL("AK", 0x0D);
 			}

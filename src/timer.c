@@ -267,7 +267,7 @@ uint32_t timer_set(uint32_t des_task_id, uint32_t sig, uint32_t duty, timer_type
 		}
 	}
 
-	timer_msg_t* timer_new = (timer_msg_t*)malloc(sizeof(timer_msg_t));
+	timer_msg_t* timer_new = (timer_msg_t*)calloc(1, sizeof(timer_msg_t));
 
 	if (timer_new == NULL) {
 		FATAL("TIMER", 0x02);
