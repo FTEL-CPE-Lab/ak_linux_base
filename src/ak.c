@@ -23,6 +23,7 @@
 uint32_t ak_thread_started = 0;
 uint32_t ak_thread_table_len = 0;
 ak_task_t* task_list = NULL;
+pthread_mutex_t mt_ak_thread_started;
 
 void ak_init_tasks(uint32_t ak_thread_table_len_init, ak_task_t* task_list_init) {
 	ak_thread_table_len = ak_thread_table_len_init;
@@ -83,7 +84,6 @@ void ak_stop_task(uint32_t task_id) {
 
 void wait_all_tasks_started() {
 	bool check_ret = true;
-	pthread_mutex_t mt_ak_thread_started;
 
 	pthread_mutex_lock(&mt_ak_thread_started);
 	ak_thread_started++;

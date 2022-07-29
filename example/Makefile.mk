@@ -1,5 +1,4 @@
 -include Config.mk
-CFLAGS += -s -Wl,--gc-sections -Wl,--print-gc-sections
 
 NAME_MODULE = $(EXAMPLE_DIR)/example
 NAME_STATIC_MODULE = libak.la
