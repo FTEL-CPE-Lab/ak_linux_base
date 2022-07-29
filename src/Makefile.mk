@@ -1,7 +1,7 @@
 -include Config.mk
 
 NAME_SHARED_MODULE = libak.so
-NAME_STATIC_MODULE = libak.la
+NAME_STATIC_MODULE = libak.a
 CFLAGS	+= -I./$(SRC_DIR)
 
 VPATH += ./$(SRC_DIR)
