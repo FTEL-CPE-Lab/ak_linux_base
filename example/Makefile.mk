@@ -1,7 +1,7 @@
 -include Config.mk
 
 NAME_MODULE = $(EXAMPLE_DIR)/example
-NAME_STATIC_MODULE = libak.la
+NAME_STATIC_MODULE = libak.a
 
 OBJ += 	$(EXAMPLE_DIR)/main.o \
 		$(EXAMPLE_DIR)/task_list.o \
